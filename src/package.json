@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "deploy:init": "serverless deploy",
-    "deploy": "serverless deploy function --function skill"
+    "deploy": "serverless deploy function --function alexaSkill",
+    "logs:tail": "serverless logs --tail --function alexaSkill"
   },
   "keywords": [
     "alexa",
@@ -22,6 +23,7 @@
   "license": "MIT LICENSE",
   "dependencies": {
     "alexa-sdk": "^1.0.6",
-    "serverless": "^1.4.0"
+    "serverless": "^1.4.0",
+    "spotify-web-api-node": "^2.3.6"
   }
 }

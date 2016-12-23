@@ -1,7 +1,7 @@
 'use strict';
 
 const Alexa = require('alexa-sdk');
-const STREAM_URL = 'http://mp3stream1.apasf.apa.at/;stream.mp3';
+const Spotify = require('spotify-web-api-node');
 
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
@@ -40,6 +40,4 @@ const handlers = {
     'AMAZON.StopIntent' () {
         this.emit(':tell', speechOutput.STOP_MESSAGE);
     }
-};
-}
 };

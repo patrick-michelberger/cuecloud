@@ -6,6 +6,7 @@ provider:
   stage: prod
   region: eu-west-1
   memorySize: 512
+  cfLogs: true
 
 functions:
   skill:
