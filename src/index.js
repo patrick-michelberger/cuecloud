@@ -1,7 +1,11 @@
 'use strict';
 
 const Alexa = require('alexa-sdk');
-const Spotify = require('spotify-web-api-node');
+const spotify = require('./spotify');
+
+spotify.getArtistId('Robin Schulz')
+    .then(id => spotify.getArtistTopTrackPreviewUrl(id))
+    .then(url => console.log(url));
 
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
