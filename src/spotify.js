@@ -22,7 +22,7 @@ function getArtistTopTrackPreviewUrl(artistId) {
             const tracks = data.body.tracks;
 
             if (tracks) {
-                const topTrack = tracks[1];
+                const topTrack = tracks[0];
                 return topTrack.preview_url;
             }
             return '';
@@ -35,7 +35,7 @@ function getArtistTopTrackSpotifyUri(artistId) {
             const tracks = data.body.tracks;
 
             if (tracks) {
-                const topTrack = tracks[1];
+                const topTrack = tracks[0];
                 return topTrack.uri;
             }
             return '';
@@ -43,13 +43,13 @@ function getArtistTopTrackSpotifyUri(artistId) {
 }
 
 module.exports = {
-    'getArtistId'(artistId) {
+    'getArtistId' (artistId) {
         return getArtistId(artistId);
     },
-    'getArtistTopTrackPreviewUrl'(artistId) {
+    'getArtistTopTrackPreviewUrl' (artistId) {
         return getArtistTopTrackPreviewUrl(artistId);
     },
-    'getArtistTopTrackSpotifyUri'(artistId) {
+    'getArtistTopTrackSpotifyUri' (artistId) {
         return getArtistTopTrackSpotifyUri(artistId);
     }
 };

@@ -1,10 +1,22 @@
 {
   "intents": [
     {
-      "intent": "StartCuecloudIntent"
+      "intent": "AskForEventsIntent",
+      "slots": [
+        {
+          "name": "city",
+          "type": "LIST_OF_CITIES"
+        }
+      ]
     },
     {
-      "intent": "StartMusicIntent"
+      "intent": "SelectEventIntent",
+      "slots": [
+        {
+          "name": "city",
+          "type": "LIST_OF_CITIES"
+        }
+      ]
     },
     {
       "intent": "AMAZON.PauseIntent"
@@ -23,4 +35,3 @@
     }
   ]
 }
-

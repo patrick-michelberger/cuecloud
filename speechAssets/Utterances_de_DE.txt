@@ -1,4 +1,1 @@
-StartCuecloudIntent start
-StartCuecloudIntent play
-
-StartMusicIntent musik
+AskForEventsIntent wer spielt in {city}

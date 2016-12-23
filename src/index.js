@@ -2,11 +2,12 @@
 
 const Alexa = require('alexa-sdk');
 const spotify = require('./spotify');
+const songkick = require('./songkick');
 
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
-    "WELCOME_MESSAGE": "Welcome to Cuecloud",
-    "HELP_MESSAGE": "You can start Cuecloud by saying 'start cuecloud'",
+    "WELCOME_MESSAGE": "Welcome to cue cloud. For which location do you want concerts?",
+    "HELP_MESSAGE": "You can start cue cloud by saying 'start cue cloud'",
     "HELP_REPROMPT": "How can I help you?",
     "STOP_MESSAGE": "See you!"
 };
@@ -22,11 +23,11 @@ const handlers = {
     'LaunchRequest' () {
         this.emit(':ask', speechOutput.WELCOME_MESSAGE);
     },
-    'StartCuecloudIntent' () {
-        this.emit(':tell', "Cuecloud starts now");
-    },
-    'StartMusicIntent' () {
-        spotify.getArtistId('Robin Schulz')
+    'AskForEventsIntent' () {
+        songkick.getEvents("Munich")
+            .then(events => {
+                return spotify.getArtistId(events[0].artist.name);
+            })
             .then(id => spotify.getArtistTopTrackPreviewUrl(id))
             .then(url => {
                 if (url) {
@@ -41,6 +42,9 @@ const handlers = {
                     this.emit(':tell', 'No artist found');
                 }
             });
+    },
+    'SelectEventIntent' () {
+        // TODO
     },
     'AMAZON.HelpIntent' () {
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);
