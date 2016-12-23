@@ -21,6 +21,6 @@ const getEvents = (location) => {
 
 module.exports = {
     'getEvents' (location) {
-        return getArtists(location);
+        return getEvents(location);
     }
 };
