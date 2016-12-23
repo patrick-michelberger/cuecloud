@@ -1,1 +1,1 @@
-AskForEventsIntent
+AskForEventsIntent who plays in {city}

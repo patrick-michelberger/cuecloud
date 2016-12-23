@@ -17,11 +17,11 @@ const events = [{
     "uri": "http://www.songkick.com/concerts/3037536-vampire-weekend-at-o2-academy-brixton?utm_source=PARTNER_ID&utm_medium=partner"
 }, {
     "artist": {
-        "name": "Robin Schulz",
+        "name": "Disclosure",
         "id": 288696,
         "picture": "http://images.sk-static.com/images/media/profile_images/artists/288696/large_avatar"
     },
-    "name": "Robin Schulz at Olympiapark (February 16, 2010)",
+    "name": "Disclosure at Olympiapark (February 16, 2010)",
     "date": "2010-02-16T19:30:00+0000",
     "venue": {
         "lat": 51.4650846,
