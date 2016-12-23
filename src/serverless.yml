@@ -9,7 +9,7 @@ provider:
   cfLogs: true
 
 functions:
-  skill:
+  alexaSkill:
     handler: index.handler
     description: Alexa skill to listen to concerts nearby
     events:

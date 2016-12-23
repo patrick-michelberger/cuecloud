@@ -22,7 +22,7 @@ const handlers = {
     'LaunchRequest' () {
         this.emit(':ask', speechOutput.WELCOME_MESSAGE);
     },
-    'StartFmFourIntent' () {
+    'StartCuecloudIntent' () {
         this.emit(':tell', "Cuecloud startet nun");
     },
     'AMAZON.HelpIntent' () {
