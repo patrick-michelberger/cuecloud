@@ -29,11 +29,27 @@ function getArtistTopTrackPreviewUrl(artistId) {
         })
 }
 
+function getArtistTopTrackSpotifyUri(artistId) {
+    return spotify.getArtistTopTracks(artistId, DEFAULT_COUNTRY)
+        .then(function(data) {
+            const tracks = data.body.tracks;
+
+            if (tracks) {
+                const topTrack = tracks[1];
+                return topTrack.uri;
+            }
+            return '';
+        })
+}
+
 module.exports = {
     'getArtistId'(artistId) {
         return getArtistId(artistId);
     },
     'getArtistTopTrackPreviewUrl'(artistId) {
         return getArtistTopTrackPreviewUrl(artistId);
+    },
+    'getArtistTopTrackSpotifyUri'(artistId) {
+        return getArtistTopTrackSpotifyUri(artistId);
     }
 };

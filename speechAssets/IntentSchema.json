@@ -4,6 +4,9 @@
       "intent": "StartCuecloudIntent"
     },
     {
+      "intent": "StartMusicIntent"
+    },
+    {
       "intent": "AMAZON.PauseIntent"
     },
     {

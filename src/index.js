@@ -3,10 +3,6 @@
 const Alexa = require('alexa-sdk');
 const spotify = require('./spotify');
 
-spotify.getArtistId('Robin Schulz')
-    .then(id => spotify.getArtistTopTrackPreviewUrl(id))
-    .then(url => console.log(url));
-
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
     "WELCOME_MESSAGE": "Welcome to Cuecloud",
@@ -28,6 +24,23 @@ const handlers = {
     },
     'StartCuecloudIntent' () {
         this.emit(':tell', "Cuecloud starts now");
+    },
+    'StartMusicIntent' () {
+        spotify.getArtistId('Robin Schulz')
+            .then(id => spotify.getArtistTopTrackPreviewUrl(id))
+            .then(url => {
+                if (url) {
+                    const playBehavior = 'REPLACE_ALL';
+                    const enqueueToken = 'new';
+                    const expectedPreviousToken = null;
+                    const offsetInMilliseconds = 0;
+
+                    this.response.audioPlayerPlay(playBehavior, url, enqueueToken, expectedPreviousToken, offsetInMilliseconds);
+                    this.emit(':responseReady');
+                } else {
+                    this.emit(':tell', 'No artist found');
+                }
+            });
     },
     'AMAZON.HelpIntent' () {
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);

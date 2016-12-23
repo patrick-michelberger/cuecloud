@@ -1,4 +1,4 @@
 StartCuecloudIntent start
 StartCuecloudIntent play
 
-StartMusicIntent music
+StartMusicIntent musik
