@@ -1,0 +1,15 @@
+service: alexa-skill-cuecloud
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: prod
+  region: eu-west-1
+  memorySize: 512
+
+functions:
+  skill:
+    handler: index.handler
+    description: Alexa skill to listen to concerts nearby
+    events:
+      - alexaSkill

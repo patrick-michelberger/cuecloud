@@ -1,0 +1,27 @@
+{
+  "name": "alexa-skill-cuecloud",
+  "version": "1.0.0",
+  "description": "Alexa skill to listen to concerts nearby.",
+  "main": "index.js",
+  "scripts": {
+    "deploy:init": "serverless deploy",
+    "deploy": "serverless deploy function --function skill"
+  },
+  "keywords": [
+    "alexa",
+    "amazon",
+    "echo",
+    "cuecloud",
+    "concerts",
+    "musik",
+    "music",
+    "voice",
+    "speech"
+  ],
+  "author": "Patrick Michelberger <patrick@michelberger.info>",
+  "license": "MIT LICENSE",
+  "dependencies": {
+    "alexa-sdk": "^1.0.6",
+    "serverless": "^1.4.0"
+  }
+}
