@@ -5,10 +5,10 @@ const Spotify = require('spotify-web-api-node');
 
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
-    "WELCOME_MESSAGE": "Willkommen bei Cuecloud",
-    "HELP_MESSAGE": "Starte Cuecloud indem du 'starte cuecloud' sagst",
-    "HELP_REPROMPT": "Wie kann ich dir helfen?",
-    "STOP_MESSAGE": "Auf Wiedersehen!"
+    "WELCOME_MESSAGE": "Welcome to Cuecloud",
+    "HELP_MESSAGE": "You can start Cuecloud by saying 'start cuecloud'",
+    "HELP_REPROMPT": "How can I help you?",
+    "STOP_MESSAGE": "See you!"
 };
 
 exports.handler = (event, context, callback) => {
@@ -23,16 +23,16 @@ const handlers = {
         this.emit(':ask', speechOutput.WELCOME_MESSAGE);
     },
     'StartCuecloudIntent' () {
-        this.emit(':tell', "Cuecloud startet nun");
+        this.emit(':tell', "Cuecloud starts now");
     },
     'AMAZON.HelpIntent' () {
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);
     },
     'AMAZON.PauseIntent' () {
-        this.emit(':tell', "Cuecloud pausieren");
+        this.emit(':tell', "Cuecloud stops");
     },
     'AMAZON.ResumeIntent' () {
-        this.emit(':tell', "Cuecloud wieder starten");
+        this.emit(':tell', "Cuecloud restart");
     },
     'AMAZON.CancelIntent' () {
         this.emit(':tell', speechOutput.STOP_MESSAGE);
