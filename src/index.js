@@ -19,38 +19,14 @@ exports.handler = (event, context, callback) => {
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
+
 const handlers = {
     'LaunchRequest' () {
         this.emit(':ask', speechOutput.WELCOME_MESSAGE);
     },
     'AskForEventsIntent' (events) {
-        const city = this.event.request.intent.slots.city.value;
-        songkick.getEvents(city)
-            .then(events => {
-                var artistCalls = [];
-                events.forEach((event) => {
-                    artistCalls.push(spotify.getArtistId(event.artist.name));
-                });
-                return Promise.all(artistCalls)
-                    .then((artistIds) => {
-                        for (var i = 0; i < events.length; i++) {
-                            events[i].artist.spotifyId = artistIds[i];
-                        }
-                        return events;
-                    });
-            })
-            .then(events => {
-                var trackCalls = [];
-                events.forEach((event) => {
-                    trackCalls.push(spotify.getArtistTopTrackPreviewUrl(event.artist.spotifyId));
-                });
-                return Promise.all(trackCalls).then((previewUrls) => {
-                    for (var i = 0; i < events.length; i++) {
-                        events[i].artist.previewUrl = previewUrls[i];
-                    }
-                    return events;
-                });
-            })
+        const city = alexaController.getIntent('city');
+        eventController.getEvents(city)
             .then(events => {
                 this.attributes['events'] = events;
                 this.attributes['index'] = 0;
@@ -61,7 +37,7 @@ const handlers = {
 
                 this.response.audioPlayerPlay(playBehavior, events[0].artist.previewUrl, this.attributes['index'], expectedPreviousToken, offsetInMilliseconds);
 
-                var outputString = "I've found " + events.length + " concerts in " + city + " from ";
+                let outputString = "I've found " + events.length + " concerts in " + city + " from ";
 
                 events.forEach((event, index) => {
                     if (index !== events.length - 1) {
@@ -81,13 +57,12 @@ const handlers = {
         console.log("PlaybackStarted");
     },
     'PlaybackNearlyFinished' () {
-
         const events = this.attributes.events;
         const playBehavior = 'ENQUEUE';
         const offsetInMilliseconds = 0;
 
         const numberOfEvents = events.length;
-        var currentIndex = this.attributes['index'];
+        let currentIndex = this.attributes['index'];
 
         if (currentIndex < numberOfEvents) {
             currentIndex = currentIndex + 1;
@@ -117,5 +92,44 @@ const handlers = {
         this.attributes['index'] = 10;
         this.response.audioPlayerStop();
         this.emit(':responseReady');
+    }
+};
+
+const eventController = {
+    'getEvents'(city) {
+        return songkick.getEvents(city)
+            .then(events => {
+                // add spotify id for each artist
+                const artistCalls = [];
+                events.forEach((event) => {
+                    artistCalls.push(spotify.getArtistId(event.artist.name));
+                });
+                return Promise.all(artistCalls)
+                    .then((artistIds) => {
+                        for (let i = 0; i < events.length; i++) {
+                            events[i].artist.spotifyId = artistIds[i];
+                        }
+                        return events;
+                    });
+            })
+            .then(events => {
+                // add spotify preview url for each artist
+                const trackCalls = [];
+                events.forEach((event) => {
+                    trackCalls.push(spotify.getArtistTopTrackPreviewUrl(event.artist.spotifyId));
+                });
+                return Promise.all(trackCalls).then((previewUrls) => {
+                    for (let i = 0; i < events.length; i++) {
+                        events[i].artist.previewUrl = previewUrls[i];
+                    }
+                    return events;
+                });
+            })
+    }
+};
+
+const alexaController = {
+    'getIntent'(name) {
+        return this.event.request.intent.slots.city.value;
     }
 };
