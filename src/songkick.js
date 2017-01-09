@@ -1,3 +1,5 @@
+'use strict';
+
 // Mock data
 const events = [{
     "artist": {
@@ -54,10 +56,10 @@ const getEvents = (location) => {
     return new Promise((resolve, reject) => {
         resolve(events);
     });
-}
+};
 
 module.exports = {
-    'getEvents' (location) {
+    'getEvents'(location) {
         return getEvents(location);
     }
 };
