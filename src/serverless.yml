@@ -9,8 +9,22 @@ provider:
   cfLogs: true
 
 functions:
+  # Alexa
   alexaSkill:
     handler: index.handler
     description: Alexa skill to listen to concerts nearby
     events:
       - alexaSkill
+  # Auth
+  showLoginPage:
+    handler: auth.showLoginPage
+    events:
+      - http: GET login
+  authorizeToken:
+    handler: auth.authorizeToken
+    events:
+      - http: GET authorize/token
+  authorizeByCode:
+    handler: auth.authorizeByCode
+    events:
+      - http: GET authorize/commit-code

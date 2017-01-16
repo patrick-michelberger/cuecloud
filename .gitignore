@@ -96,3 +96,4 @@ jspm_packages
 
 ## Custom
 .serverless
+src/config/*
