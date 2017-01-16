@@ -28,3 +28,8 @@ functions:
     handler: auth.authorizeByCode
     events:
       - http: GET authorize/commit-code
+  # Email
+  sendEmail:
+    handler: email.send
+    events:
+      - http: POST emails

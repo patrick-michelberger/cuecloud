@@ -24,9 +24,11 @@
   "license": "MIT",
   "dependencies": {
     "alexa-sdk": "^1.0.6",
+    "aws-sdk": "^2.7.21",
     "firebase-admin": "^4.0.4",
     "jsonwebtoken": "^7.2.1",
     "random-id": "0.0.2",
+    "request": "^2.79.0",
     "serverless": "^1.4.0",
     "spotify-web-api-node": "^2.3.6"
   }
