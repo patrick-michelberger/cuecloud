@@ -5,7 +5,7 @@
       "slots": [
         {
           "name": "city",
-          "type": "LIST_OF_CITIES"
+          "type": "AMAZON.US_CITY"
         }
       ]
     },
@@ -14,7 +14,7 @@
       "slots": [
         {
           "name": "city",
-          "type": "LIST_OF_CITIES"
+          "type": "AMAZON.US_CITY"
         }
       ]
     },

@@ -11,7 +11,7 @@ provider:
 functions:
   # Alexa
   alexaSkill:
-    handler: index.handler
+    handler: skill.handler
     description: Alexa skill to listen to concerts nearby
     events:
       - alexaSkill
