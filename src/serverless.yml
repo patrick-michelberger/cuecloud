@@ -55,6 +55,9 @@ functions:
               querystrings:
                 mp3Url: true
           response:
-            headers:
-              Content-Type: "'audio/mpeg'"
             template: $input.path('$')
+            statusCodes:
+              301:
+                pattern: ''
+                headers:
+                  Location: integration.response.body.headers.Location

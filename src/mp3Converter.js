@@ -3,9 +3,10 @@
 const fs = require('fs');
 const spawn = require('child_process').spawn;
 
+const FFMPEG_BIN = './bin/ffmpeg_linux64';
 const MP3_TEMP_FILE_URI = '/tmp/output.mp3';
 
-module.exports.convert = function(event, context, callback) {
+module.exports.convert = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false; //<---Important
 
     // const mp3Url = event.query.mp3Url;
@@ -21,21 +22,22 @@ module.exports.convert = function(event, context, callback) {
             console.error('Could not convert ' + mp3Url, error);
             handleError(400, "Convertion failed. " + error, callback);
         } else {
-            const stats = fs.statSync(MP3_TEMP_FILE_URI);
-            const fileSizeInBytes = stats["size"];
-            //Convert the file size to megabytes (optional)
-            const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
-
-            console.log(mp3Url + ' successfully converted.(' + fileSizeInMegabytes + 'MB)');
-
-            const content = fs.readFileSync(MP3_TEMP_FILE_URI);
-            context.succeed(content);
+            logFileStats(MP3_TEMP_FILE_URI);
+            handleRedirect('https://google.com', callback);
         }
     })
 };
 
+const logFileStats = (fileUri) => {
+    const stats = fs.statSync(fileUri);
+    const fileSizeInBytes = stats["size"];
+    //Convert the file size to megabytes (optional)
+    const fileSizeInMegabytes = parseFloat(fileSizeInBytes / 1000000).toFixed(3);
+    console.log(`${fileUri}  size: ${fileSizeInMegabytes}mb`);
+};
+
 const convertMp3 = (mp3Link, fileUri, callback) => {
-    spawn('./ffmpeg', [
+    spawn(FFMPEG_BIN, [
         '-i', mp3Link,
         '-b:a', '48k',
         '-y',
@@ -47,11 +49,13 @@ const convertMp3 = (mp3Link, fileUri, callback) => {
         .on('close', () => callback(null));
 };
 
-const handleBinaryResponse = (data, callback) => {
+const handleRedirect = (url, callback) => {
     const response = {
-        statusCode: 200,
-        ContentType: 'audio / mpeg',
-        body: data
+        statusCode: 301,
+        headers: {
+            Location: url
+        },
+        body: ''
     };
     callback(null, response);
 };
