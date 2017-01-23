@@ -1,5 +1,9 @@
 service: alexa-skill-cuecloud
 
+package:
+  exclude:
+    - bin/ffmpeg_mac
+
 provider:
   name: aws
   runtime: nodejs4.3
@@ -38,3 +42,19 @@ functions:
     handler: events.getEvents
     events:
       - http: GET events
+  # Convert
+  getMp3:
+    handler: mp3Converter.convert
+    events:
+      - http:
+          path: convert
+          method: get
+          integration: lambda
+          request:
+            parameters:
+              querystrings:
+                mp3Url: true
+          response:
+            headers:
+              Content-Type: "'audio/mpeg'"
+            template: $input.path('$')
