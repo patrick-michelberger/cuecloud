@@ -161,10 +161,10 @@
 		};
 
 		const sendAlexaToken = () => {
+			const uid = auth.currentUser.uid;
 			return auth.currentUser.getToken(true).then(token => {
-          const l = window.location;
-          const url = `https://jg0zd2nq1g.execute-api.eu-west-1.amazonaws.com/prod/authorize/token?token=${token}`
-          return $.get(url);
+			  const url = `https://jg0zd2nq1g.execute-api.eu-west-1.amazonaws.com/prod/authorize/token?token=${token}&uid=${uid}`;
+			  return $.get(url);
 			}).catch(handleError);
 		};
 

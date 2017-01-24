@@ -39,9 +39,12 @@ module.exports.authorizeToken = function(event, context, callback) {
     }
 
     const original_token = event.queryStringParameters.token;
+    const uid = event.queryStringParameters.uid;
 
     if (!original_token) {
         handleError(422, "Missing token query parameter.", callback);
+    } else if (!uid) {
+        handleError(422, "Missing uid query parameter.", callback);
     } else {
         admin.auth()
             .verifyIdToken(original_token)
@@ -52,6 +55,7 @@ module.exports.authorizeToken = function(event, context, callback) {
                     const token = randomID(6, "0");
                     admin.database().ref(`tokens/${token}`).set({
                         token: token,
+                        uid: uid,
                         created: admin.database.ServerValue.TIMESTAMP
                     }).then((data) => {
                         handleResponse(200, token, callback);
@@ -103,7 +107,7 @@ module.exports.authorizeByCode = function(event, context, callback) {
         const d = snapshot.val();
         return ref.remove().then(() => {
             jwt.sign({
-                "uid": d.token
+                "uid": d.uid
             }, config.jwtSecret, {}, (error, final_token) => {
                 if (error) {
                     handleError(400, `Could not make JWT`, callback);
@@ -120,6 +124,36 @@ module.exports.authorizeByCode = function(event, context, callback) {
     }).catch((error) => {
         console.log("error: ", error);
         handleError(400, error, callback);
+    });
+}
+
+
+module.exports.decodeAccessToken = (accessToken) => {
+
+    if (admin.apps.length == 0) { // <---Important!!! In lambda, it will cause double initialization.
+        admin.initializeApp({
+            credential: FIREBASE_ADMIN_CREDENTIALS,
+            databaseURL: config.firebase.databaseURL,
+        })
+    }
+
+    return new Promise((resolve, reject) => {
+        jwt.verify(accessToken, config.jwtSecret, {}, (error, decoded) => {
+            if (error ||  !decoded ||  !decoded.uid) {
+                return reject(error);
+            }
+            const ref = admin.database().ref('users/' + decoded.uid);
+            ref.once("value").then((snapshot) => {
+                const d = snapshot.val();
+                resolve({
+                    displayName: d.displayName,
+                    uid: d.uid,
+                    email: d.email
+                });
+            }).catch((error) => {
+                reject(error);
+            });
+        });
     });
 }
 
