@@ -6,6 +6,10 @@
         {
           "name": "city",
           "type": "AMAZON.US_CITY"
+        },
+        {
+          "name": "genre",
+          "type": "LIST_OF_GENRES"
         }
       ]
     },
@@ -15,6 +19,23 @@
         {
           "name": "city",
           "type": "AMAZON.US_CITY"
+        },
+        {
+          "name": "genre",
+          "type": "LIST_OF_GENRES"
+        }
+      ]
+    },
+    {
+      "intent": "SendTicketIntent",
+      "slots": [
+        {
+          "name": "city",
+          "type": "AMAZON.US_CITY"
+        },
+        {
+          "name": "genre",
+          "type": "LIST_OF_GENRES"
         }
       ]
     },

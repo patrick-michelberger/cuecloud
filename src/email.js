@@ -20,14 +20,14 @@ module.exports.send = function(event, context, callback) {
 
     const body = JSON.parse(event.body);
 
-    const receiver = body.receiver;
-    if (!receiver) {
-        handleError(400, "Missing receiver.", callback);
+    const email = body.receiverEmail;
+    if (!email) {
+        handleError(400, "Missing receiverEmail.", callback);
     }
 
-    const senderId = body.senderId;
-    if (!senderId) {
-        handleError(400, "Missing senderId.", callback);
+    const message = body.message;
+    if (!message) {
+        handleError(400, "Missing message.", callback);
     }
 
     // Initialize Firebase
@@ -38,23 +38,31 @@ module.exports.send = function(event, context, callback) {
         })
     }
 
-    const ref = admin.database().ref('users/' + senderId);
-    ref.once("value").then((snapshot) => {
-        const receiver = snapshot.val();
-        if (!receiver) {
-            handleError(400, 'No user found', callback);
+    sendEmail(event, email, message, (error) => {
+        if (error) {
+            handleError(400, error, callback);
         } else {
-            sendEmail(event, receiver, "pmichelberger@gmail.com", (error) => {
-                if (error) {
-                    handleError(400, error, callback);
-                } else {
-                    handleResponse(200, "Email sent", callback);
-                }
-            });
+            handleResponse(200, "Email sent", callback);
         }
-    }).catch((error) => {
-        handleError(400, error, callback);
     });
+
+    // const ref = admin.database().ref('users/' + senderId);
+    // ref.once("value").then((snapshot) => {
+    //     const receiver = snapshot.val();
+    //     if (!receiver) {
+    //         handleError(400, 'No user found', callback);
+    //     } else {
+    //         sendEmail(event, receiver, "pmichelberger@gmail.com", (error) => {
+    //             if (error) {
+    //                 handleError(400, error, callback);
+    //             } else {
+    //                 handleResponse(200, "Email sent", callback);
+    //             }
+    //         });
+    //     }
+    // }).catch((error) => {
+    //     handleError(400, error, callback);
+    // });
 };
 
 /**
@@ -88,20 +96,19 @@ const handleError = (status, message, callback) => {
     callback(null, response);
 };
 
-const sendEmail = (event, receiver, sender, done) => {
+
+const sendEmail = (event, email, message, done) => {
     const params = {
         Destination: {
             ToAddresses: [
-                receiver.email
+                email
             ]
         },
         Message: {
             Body: {
-                Text: {
-                    Data: 'Hi ' + receiver.displayName + ', \nyour requested concert link for José González & The String Theory</b>' +
-                        '\nyour requested concert link for José González & The String Theory: http://www.ticketmaster.de/event/200921' +
-                        '\nHave fun!' +
-                        '\nAlexa'
+                Html: {
+                    Data: message,
+                    Charset: 'UTF-8'
                 }
             },
             Subject: {
@@ -109,7 +116,30 @@ const sendEmail = (event, receiver, sender, done) => {
                 Charset: 'UTF-8'
             }
         },
-        Source: sender
+        Source: "pmichelberger@gmail.com"
+    };
+    ses.sendEmail(params, done);
+};
+
+const sendTextEmail = (event, email, message, done) => {
+    const params = {
+        Destination: {
+            ToAddresses: [
+                email
+            ]
+        },
+        Message: {
+            Body: {
+                Text: {
+                    Data: message
+                }
+            },
+            Subject: {
+                Data: 'Cuecloud: Concert Recommendation',
+                Charset: 'UTF-8'
+            }
+        },
+        Source: "pmichelberger@gmail.com"
     };
     ses.sendEmail(params, done);
 };

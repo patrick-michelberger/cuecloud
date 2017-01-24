@@ -3,6 +3,8 @@
 const Alexa = require('alexa-sdk');
 const spotify = require('./spotify');
 const EventService = require('./services/event.service');
+const TicketService = require('./services/ticket.service');
+const Auth = require('./auth');
 
 const speechOutput = {
     "SKILL_NAME": "Cuecloud",
@@ -24,18 +26,39 @@ const handlers = {
     'LaunchRequest' () {
         this.emit(':ask', speechOutput.WELCOME_MESSAGE);
     },
-    'AskForEventsIntent' (events) {
+    'SendTicketIntent' (events) {
         const city = this.event.request.intent.slots.city.value;
+        const genre = this.event.request.intent.slots.genre.value ||  "electronic";
 
-        if (!city) {
+        if (this.event.session.user.accessToken == undefined) {
+            this.emit(':tellWithLinkAccountCard', 'To start using this skill, please use the companion app to authenticate on Amazon');
+        } else if (!city) {
             this.emit(':tell', "Sorry, I haven't found any events in this city. Try another one.");
         } else {
-            eventController.getEvents(city)
+            Auth.decodeAccessToken(this.event.session.user.accessToken).then((user) => {
+                return TicketService.sendEmail(user.email, user.displayName, city, genre)
+                    .then(() => {
+                        this.emit(':tell', "Hello, " + user.displayName + ". I've sent you a ticket link to " + user.email);
+                    });
+            }).catch((error) => {
+                console.log("error: ", error);
+                this.emit(':tell', "Sorry, I haven't found any events in this city. Try another one.");
+            });
+        }
+    },
+    'AskForEventsIntent' (events) {
+        const city = this.event.request.intent.slots.city.value;
+        const genre = this.event.request.intent.slots.genre.value ||  "electronic";
+
+        if (!city) {
+            this.emit(':tell', "Sorry, I haven't found any " + genre + " events in this city. Try another one.");
+        } else {
+            eventController.getEvents(city, genre)
                 .then(events => {
                     if (events.length < 1) {
-                        this.emit(':tell', "Sorry, I haven't found any events in this city. Try another one.");
+                        this.emit(':tell', "Sorry, I haven't found any " + genre + " events in " + city + " Try another one.");
                     } else {
-                        let outputString = "I've found " + events.length + " concerts in " + city + '<break time="1s"/>. from ';
+                        let outputString = "I've found " + events.length + " " + genre + " concerts in " + city + '<break time="1s"/>. from ';
                         events.forEach((event, index) => {
                             if (index !== events.length - 1) {
                                 outputString += event.artists[0].name + ' <break time="0.5s"/>';
@@ -95,8 +118,14 @@ const handlers = {
 };
 
 const eventController = {
-    'getEvents' (city) {
-        return EventService.fetchBandsintownEvents(city);
+    'getEvents' (city, genre) {
+        return EventService.fetchBandsintownEvents(city, genre)
+            .catch((error) => {
+                console.log("error: ", error);
+            });
+    },
+    'sendTicketEmail' (city) {
+        return TicketService.sendEmail(city);
     }
 };
 
