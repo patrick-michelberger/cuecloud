@@ -2,6 +2,7 @@
 
 const config = require("./config/config.json");
 const SpotifyWebApi = require('spotify-web-api-node');
+const url = require('url');
 const DEFAULT_COUNTRY = 'DE'; // format: ISO 3166-1 alpha-2
 
 const spotify = new SpotifyWebApi();
@@ -23,7 +24,7 @@ const getArtistId = (artist) => {
             }
             return '';
         })
-}
+};
 
 const getArtistTopTrackPreviewUrl = (artistId) => {
     return spotify.getArtistTopTracks(artistId, DEFAULT_COUNTRY)
@@ -36,7 +37,7 @@ const getArtistTopTrackPreviewUrl = (artistId) => {
             }
             return '';
         })
-}
+};
 
 const getArtistTopTrackSpotifyUri = (artistId) => {
     return spotify.getArtistTopTracks(artistId, DEFAULT_COUNTRY)
@@ -49,7 +50,7 @@ const getArtistTopTrackSpotifyUri = (artistId) => {
             }
             return '';
         })
-}
+};
 
 const getArtistsByGenre = (genres) => {
     return refreshAccessToken()
@@ -60,14 +61,20 @@ const getArtistsByGenre = (genres) => {
         }).then((data) => {
             return data.body.tracks.map(track => track["artists"][0].name);
         });
-}
+};
 
 const refreshAccessToken = () => {
     return spotify.refreshAccessToken()
         .then((data) => {
             spotify.setAccessToken(data.body['access_token']);
         });
-}
+};
+
+const getIdFromPreviewUrl = (mp3PreviewUrl) => {
+    // example: https://p.scdn.co/mp3-preview/d0a77a3229af6dc37420db230c92d5d96a2da78
+    const path = url.parse(mp3PreviewUrl).pathname;
+    return path.split('/')[2];
+};
 
 module.exports = {
     'getArtistId' (artistId) {
@@ -81,5 +88,6 @@ module.exports = {
     },
     'getArtistsByGenre' (genres) {
         return getArtistsByGenre(genres);
-    }
+    },
+    getIdFromPreviewUrl
 };
