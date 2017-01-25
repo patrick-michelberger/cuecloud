@@ -77,17 +77,9 @@ const getIdFromPreviewUrl = (mp3PreviewUrl) => {
 };
 
 module.exports = {
-    'getArtistId' (artistId) {
-        return getArtistId(artistId);
-    },
-    'getArtistTopTrackPreviewUrl' (artistId) {
-        return getArtistTopTrackPreviewUrl(artistId);
-    },
-    'getArtistTopTrackSpotifyUri' (artistId) {
-        return getArtistTopTrackSpotifyUri(artistId);
-    },
-    'getArtistsByGenre' (genres) {
-        return getArtistsByGenre(genres);
-    },
+    getArtistId,
+    getArtistTopTrackPreviewUrl,
+    getArtistTopTrackSpotifyUri,
+    getArtistsByGenre,
     getIdFromPreviewUrl
 };
