@@ -12,6 +12,31 @@ provider:
   memorySize: 512
   cfLogs: true
 
+resources:
+  Resources:
+    Mp3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: spotifypreviewmp3sforalexa
+        AccessControl: PublicReadWrite
+    Mp3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: Mp3Bucket
+        PolicyDocument:
+          Statement:
+            - Action:
+                - 's3:GetObject'
+              Effect: Allow
+              Principal: '*'
+              Resource:
+                Fn::Join:
+                  - ''
+                  - - 'arn:aws:s3:::'
+                    - Ref: Mp3Bucket
+                    - '/*'
+
 functions:
   # Alexa
   alexaSkill:
@@ -43,6 +68,13 @@ functions:
     events:
       - http: GET events
   # Convert
+  s3:
+    handler: s3.save
+    events:
+      - http:
+          path: save
+          method: get
+          integration: lambda
   getMp3:
     handler: mp3Converter.convert
     events:
