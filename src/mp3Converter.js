@@ -2,28 +2,42 @@
 
 const fs = require('fs');
 const spawn = require('child_process').spawn;
+const url = require('url');
+const spotify = require('./spotify');
+const s3 = require('./s3');
 
 const FFMPEG_BIN = './bin/ffmpeg_linux64';
-const MP3_TEMP_FILE_URI = '/tmp/output.mp3';
+const RESULT_DIR = '/tmp';
 
 module.exports.convert = (event, context, callback) => {
     context.callbackWaitsForEmptyEventLoop = false; //<---Important
 
     // const mp3Url = event.query.mp3Url;
-    const mp3Url = 'https://p.scdn.co/mp3-preview/d0a77a3229af6dc37420db230c92d5d96a2da780';
-    if (!mp3Url) {
-        handleError(400, "Missing receiver.", callback);
+    const previewMp3Url = 'https://p.scdn.co/mp3-preview/d0a77a3229af6dc37420db230c92d5d96a2da780';
+    const previewMp3FileName = spotify.getIdFromPreviewUrl(previewMp3Url) + '.mp3';
+
+    if (!previewMp3Url) {
+        handleError(400, "No valid spotify preview url", callback);
     }
 
-    console.log('Converting ' + mp3Url);
+    console.log('Converting ' + previewMp3Url);
 
-    convertMp3(mp3Url, MP3_TEMP_FILE_URI, (error) => {
+    const convertedFileUri = RESULT_DIR + '/' + previewMp3FileName;
+
+    convertMp3(previewMp3Url, convertedFileUri, (error) => {
         if (error) {
-            console.error('Could not convert ' + mp3Url, error);
-            handleError(400, "Convertion failed. " + error, callback);
+            console.error('Conversion failed', previewMp3Url, error);
+            handleError(400, 'Conversion failed + ' + error, callback);
         } else {
-            logFileStats(MP3_TEMP_FILE_URI);
-            handleRedirect('https://google.com', callback);
+            logFileStats(convertedFileUri);
+            s3.uploadFile(convertedFileUri, previewMp3FileName, (err, publicUrl) => {
+                if (err) {
+                    console.log('Upload to S3 failed', err);
+                    handleError(500, 'Upload to S3 failed ' + err, callback)
+                } else {
+                    handlePermanentRedirect(publicUrl, callback);
+                }
+            })
         }
     })
 };
@@ -31,25 +45,24 @@ module.exports.convert = (event, context, callback) => {
 const logFileStats = (fileUri) => {
     const stats = fs.statSync(fileUri);
     const fileSizeInBytes = stats["size"];
-    //Convert the file size to megabytes (optional)
     const fileSizeInMegabytes = parseFloat(fileSizeInBytes / 1000000).toFixed(3);
     console.log(`${fileUri}  size: ${fileSizeInMegabytes}mb`);
 };
 
-const convertMp3 = (mp3Link, fileUri, callback) => {
+const convertMp3 = (mp3Link, resultUri, callback) => {
     spawn(FFMPEG_BIN, [
         '-i', mp3Link,
         '-b:a', '48k',
         '-y',
         '-ar', '16000',
-        fileUri
+        resultUri
     ])
         .on('message', msg => console.log(msg))
         .on('error', error => callback(error))
         .on('close', () => callback(null));
 };
 
-const handleRedirect = (url, callback) => {
+const handlePermanentRedirect = (url, callback) => {
     const response = {
         statusCode: 301,
         headers: {
