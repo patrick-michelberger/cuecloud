@@ -17,7 +17,7 @@ resources:
     Mp3Bucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: spotifypreviewmp3sforalexa
+        BucketName: spotify-preview-mp3s-for-alexa
         AccessControl: PublicReadWrite
     Mp3BucketPolicy:
       Type: AWS::S3::BucketPolicy
@@ -68,13 +68,6 @@ functions:
     events:
       - http: GET events
   # Convert
-  s3:
-    handler: s3.save
-    events:
-      - http:
-          path: save
-          method: get
-          integration: lambda
   getMp3:
     handler: mp3Converter.convert
     events:
