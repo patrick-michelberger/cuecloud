@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "deploy:init": "serverless deploy",
-    "deploy": "serverless deploy function --function alexaSkill",
-    "logs:tail": "serverless logs --tail --function alexaSkill"
+    "deploy:remove": "serverless remove",
+    "deploy": "serverless deploy function --function s3",
+    "logs:tail": "serverless logs --tail --function s3"
   },
   "keywords": [
     "alexa",
