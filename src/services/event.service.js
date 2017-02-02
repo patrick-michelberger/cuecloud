@@ -28,9 +28,9 @@ EventService.fetchBandsintownEvents = (location, genre) => {
                 eventCalls.push(EventService.recommendEventsByArtist(artist, location));
             });
             return Promise.all(eventCalls.map(p => p.catch(e => {
-                    console.log("error: ", e);
-                    return [];
-                })))
+                console.log("error: ", e);
+                return [];
+            })))
                 .then((events) => {
                     const flatten = arr => arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
                     const unique = (arrArg) => {
@@ -74,13 +74,13 @@ EventService.fetchBandsintownEvents = (location, genre) => {
 };
 
 EventService.fetchTicketmasterEvents = (location, page) => {
-    page = page ||  0;
+    page = page || 0;
     const TICKETMASTER_URL = 'https://app.ticketmaster.com/discovery/v2/events.json?apikey=' + config.ticketmaster.apiKey + '&city=' + location + '&classificationName=Music' + '&page=' + page;
 
     const options = {
         method: 'get',
         url: TICKETMASTER_URL
-    }
+    };
 
     return request(options)
         .then(function(body) {
@@ -89,7 +89,7 @@ EventService.fetchTicketmasterEvents = (location, page) => {
             let events = [];
 
             if (body._embedded) {
-                events = body._embedded.events ||  [];
+                events = body._embedded.events || [];
             }
             const result = {
                 page: page,
@@ -102,7 +102,7 @@ EventService.fetchTicketmasterEvents = (location, page) => {
             const artistCalls = [];
             events.forEach((event) => {
                 event.artist = {};
-                if (event._embedded && event._embedded.attractions && event._embedded.attractions[0])  {
+                if (event._embedded && event._embedded.attractions && event._embedded.attractions[0]) {
                     event.artist.name = event._embedded.attractions[0].name;
                     artistCalls.push(spotify.getArtistId(event._embedded.attractions[0].name));
                 }

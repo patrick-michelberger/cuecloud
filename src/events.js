@@ -41,4 +41,4 @@ const handleError = (status, message, callback) => {
         })
     };
     callback(null, response);
-};;
+};

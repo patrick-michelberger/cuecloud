@@ -2,51 +2,26 @@
 
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const s3 = new AWS.S3({ params: { Bucket: 'spotifypreviewmp3sforalexa' } });
+const s3 = new AWS.S3({ params: { Bucket: 'spotify-preview-mp3s-for-alexa' } });
 
-module.exports.save = (event, context, callback) => {
-    context.callbackWaitsForEmptyEventLoop = false; //<---Important
-
-    const uploadParams = {
-        Key: 'testfile',
-        Body: fs.readFileSync('package.json')
+/*
+ * Upload a file to s3 a get the public url as object in the callback
+ */
+const uploadFile = (fileUrl, fileName, callback) => {
+    const s3FileParams = {
+        Key: fileName,
+        Body: fs.readFileSync(fileUrl)
     };
-    s3.upload(uploadParams, (err, data) => {
+    s3.upload(s3FileParams, (err, data) => {
         if (err) {
-            console.error('Could not create s3 bucket', err);
-            handleError(500, err.message, callback);
+            console.error('Error uploading file to S3   ', err);
+            callback(err, null);
         } else {
-            console.log('S3 bucket created', data);
-            handleSuccess('S3 bucket created ' + JSON.stringify(data), callback);
+            callback(null, data.Location);
         }
     })
 };
 
-const handleRedirect = (url, callback) => {
-    const response = {
-        statusCode: 301,
-        headers: {
-            Location: url
-        },
-        body: ''
-    };
-    callback(null, response);
-};
-
-const handleSuccess = (data, callback) => {
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(data)
-    };
-    callback(null, response);
-};
-
-const handleError = (status, message, callback) => {
-    const response = {
-        statusCode: status,
-        body: JSON.stringify({
-            "message": message
-        })
-    };
-    callback(null, response);
+module.exports = {
+    uploadFile
 };
