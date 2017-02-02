@@ -9,12 +9,10 @@ const s3 = require('./s3');
 const FFMPEG_BIN = './bin/ffmpeg_linux64';
 const RESULT_DIR = '/tmp';
 
-module.exports.convert = (event, context, callback) => {
-    context.callbackWaitsForEmptyEventLoop = false; //<---Important
-
+module.exports.convert = (fileToConvert, fileName, callback) => {
     // const mp3Url = event.query.mp3Url;
-    const previewMp3Url = 'https://p.scdn.co/mp3-preview/d0a77a3229af6dc37420db230c92d5d96a2da780';
-    const previewMp3FileName = spotify.getIdFromPreviewUrl(previewMp3Url) + '.mp3';
+    const previewMp3Url = fileToConvert;
+    const previewMp3FileName = fileName + '.mp3';
 
     if (!previewMp3Url) {
         handleError(400, "No valid spotify preview url", callback);
@@ -35,7 +33,7 @@ module.exports.convert = (event, context, callback) => {
                     console.log('Upload to S3 failed', err);
                     handleError(500, 'Upload to S3 failed ' + err, callback)
                 } else {
-                    handlePermanentRedirect(publicUrl, callback);
+                    callback(publicUrl);
                 }
             })
         }
