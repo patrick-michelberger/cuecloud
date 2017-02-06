@@ -40,31 +40,31 @@ resources:
 functions:
   # Alexa
   alexaSkill:
-    handler: skill.handler
+    handler: alexa/skill.handler
     description: Alexa skill to listen to concerts nearby
     events:
       - alexaSkill
   # Auth
   showLoginPage:
-    handler: auth.showLoginPage
+    handler: auth/auth.lambda.showLoginPage
     events:
       - http: GET login
   authorizeToken:
-    handler: auth.authorizeToken
+    handler: auth/auth.authorizeToken
     events:
       - http: GET authorize/token
   authorizeByCode:
-    handler: auth.authorizeByCode
+    handler: auth/auth.authorizeByCode
     events:
       - http: GET authorize/commit-code
   # Email
   sendEmail:
-    handler: email.send
+    handler: mail/email.send
     events:
       - http: POST emails
   # Events
   getEvents:
-    handler: events.getEvents
+    handler: events/events.getEvents
     events:
       - http: GET events
   # Convert

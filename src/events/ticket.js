@@ -1,13 +1,13 @@
-'use strict'
+'use strict';
 
 const request = require('request-promise');
 const config = require("../config/config.json");
-const EventService = require("./event.service");
+const bandsInTown = require('../api/bands-in-town');
 
 let TicketService = {};
 
 TicketService.sendEmail = (email, receiverName, city, genre) => {
-    return EventService.fetchBandsintownEvents(city, genre)
+    return bandsInTown.fetchEvents(city, genre)
         .then((events) => {
             const url = 'https://jg0zd2nq1g.execute-api.eu-west-1.amazonaws.com/prod/emails';
             let message = "Hello " + receiverName + ",<br/>Here are your ticket links for <b>" + genre + " concerts</b> in <b>" + city + "</b>.<br/>";
@@ -44,7 +44,7 @@ TicketService.sendEmail = (email, receiverName, city, genre) => {
                 message += "<p>Sorry I've found no event. Try another city.</p>"
             }
 
-            message += "<p>"
+            message += "<p>";
             message += "Have fun! Alexa.";
             message += "</p>";
 

@@ -59,7 +59,5 @@ const getEvents = (location) => {
 };
 
 module.exports = {
-    'getEvents'(location) {
-        return getEvents(location);
-    }
+    getEvents
 };

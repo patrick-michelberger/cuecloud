@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require("./config/config.json");
+const config = require("./../config/config.json");
 const SpotifyWebApi = require('spotify-web-api-node');
 const url = require('url');
 const DEFAULT_COUNTRY = 'DE'; // format: ISO 3166-1 alpha-2
