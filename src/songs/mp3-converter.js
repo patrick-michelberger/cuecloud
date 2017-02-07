@@ -5,7 +5,9 @@ const execFile = require('child_process').execFile;
 const lambda = require('../api/aws-lambda');
 const randomId = require('random-id');
 
-const FFMPEG_BIN = '../bin/ffmpeg_linux64';
+// the path must be relative to the root project src path for aws lambda. on local you
+// need the relative path from the executing js script
+const FFMPEG_BIN = './bin/ffmpeg_linux64';
 const RESULT_DIR = '/tmp';
 
 /**

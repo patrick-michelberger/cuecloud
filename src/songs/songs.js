@@ -7,6 +7,7 @@ const spotify = require('../api/spotify');
 const getPreviewTrackUrl = (artist) => {
     return spotify.getArtistId(artist)
         .then(artistId => spotify.getArtistTopTrackPreviewUrl(artistId))
+        // TODO first check if file is already on s3
         .then(url => mp3Converter.convert(url))
         .then(fileUri => s3.uploadFile(fileUri, artist + '.mp3'));
 };

@@ -8,6 +8,10 @@ const songs = require('../songs/songs');
 const speechOutput = require('./speech-output');
 // const Auth = require('./auth');
 
+// TODO Put all paths into env script (also set path to ffmpeg into env vars)
+// needed for aws lambda to find our binaries
+process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
+
 exports.handler = (event, context, callback) => {
     const alexa = Alexa.handler(event, context);
     alexa.appId = 'amzn1.ask.skill.bd0d35ab-32a3-44d0-908b-c435639b447b';
@@ -30,14 +34,12 @@ const handlers = {
         } else {
             SongKick.getEvents(city)
                 .then(events => {
-                    console.log('1');
                     const previewTrackCalls = [];
                     events.forEach((event) => {
                         previewTrackCalls.push(songs.getPreviewTrackUrl(event.artist.name));
                     });
                     return Promise.all(previewTrackCalls)
                         .then((previewTracks) => {
-                            console.log('1.1', previewTracks);
                             for (let i = 0; i < events.length; i++) {
                                 events[i].artist.previewUrl = previewTracks[i];
                             }
@@ -45,7 +47,6 @@ const handlers = {
                         });
                 })
                 .then(events => {
-                    console.log('2');
                     if (events.length < 1) {
                         this.emit(':tell', "Sorry, I haven't found any " + genre + " events in " + city + " Try another one.");
                     } else {
@@ -58,7 +59,6 @@ const handlers = {
                             }
                         });
 
-                        console.log('3');
                         if (events[0]) {
                             outputString += 'Now playing ' + events[0].artist.name + ' at ' + events[0].venue.name + '<break time="1s"/><audio src="' + events[0].artist.previewUrl + '"></audio>';
                         }
