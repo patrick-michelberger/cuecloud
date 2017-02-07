@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const spawn = require('child_process').spawn;
+const execFile = require('child_process').execFile;
 const lambda = require('../api/aws-lambda');
 const randomId = require('random-id');
 
@@ -15,52 +15,49 @@ const RESULT_DIR = '/tmp';
  * @returns {Promise} with converted file uri
  */
 const convert = (mp3ToConvertUri) => {
-    return new Promise((resolve, reject) => {
-        if (!mp3ToConvertUri) {
-            reject(new Error('No uri to convert'));
-        }
-
-        console.log('Converting ' + mp3ToConvertUri);
-
-        const resultFileName = randomId(0, '0') + '.mp3';
-        const resultFileUri = RESULT_DIR + '/' + resultFileName;
-
-        convertMp3(mp3ToConvertUri, resultFileUri, (error) => {
-            if (error) {
-                reject(error);
-            }
-            //logFileStatsAsync(resultFileUri);
-            resolve(resultFileUri)
-        });
-
-    });
+    return convertMp3(mp3ToConvertUri)
+        .then(uri => logFileStats(uri))
+        .catch(error => console.error('File could not be converted', error));
 };
 
 module.exports = {
     convert
 };
 
-const convertMp3 = (mp3Link, resultUri, callback) => {
-    spawn(FFMPEG_BIN, [
-        '-i', mp3Link,
-        '-b:a', '48k',
-        '-y',
-        '-ar', '16000',
-        resultUri
-    ])
-        .on('message', msg => console.log(msg))
-        .on('error', error => callback(error))
-        .on('close', () => callback(null));
+const convertMp3 = (mp3Link) => {
+    return new Promise((resolve, reject) => {
+        console.log('Converting ' + mp3Link);
+
+        const resultFileName = randomId(0, '0') + '.mp3';
+        const resultFileUri = RESULT_DIR + '/' + resultFileName;
+
+        execFile(FFMPEG_BIN, [
+            '-i', mp3Link,
+            '-b:a', '48k',
+            '-y',
+            '-ar', '16000',
+            resultFileUri
+        ], (error) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(resultFileUri);
+        })
+    })
 };
 
-const logFileStatsAsync = (fileUri) => {
-    fs.stat(fileUri, (err, stats) => {
-        if (err || !stats) {
-            console.log('No file stats for ' + fileUri, err);
-            return;
-        }
-        const fileSizeInBytes = stats["size"];
-        const fileSizeInMegabytes = parseFloat(fileSizeInBytes / 1000000).toFixed(3);
-        console.log(`File stats for ${fileUri}: size: ${fileSizeInMegabytes}mb`);
+const logFileStats = (fileUri) => {
+    return new Promise((resolve, reject) => {
+        fs.stat(fileUri, (err, stats) => {
+            if (err || !stats) {
+                reject('No file stats for ' + fileUri, err);
+                return;
+            }
+            const fileSizeInBytes = stats["size"];
+            const fileSizeInMegabytes = parseFloat(fileSizeInBytes / 1000000).toFixed(3);
+            console.log(`File stats for ${fileUri}: size: ${fileSizeInMegabytes}mb`);
+            resolve(fileUri);
+        });
     });
 };
