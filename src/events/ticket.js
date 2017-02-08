@@ -2,12 +2,10 @@
 
 const request = require('request-promise');
 const config = require("../config/config.json");
-const bandsInTown = require('../api/bands-in-town');
+const events = require('./events');
 
-let TicketService = {};
-
-TicketService.sendEmail = (email, receiverName, city, genre) => {
-    return bandsInTown.fetchEvents(city, genre)
+const sendEmail = (email, receiverName, city, genre) => {
+    return events.fetchEvents(city, genre)
         .then((events) => {
             const url = 'https://jg0zd2nq1g.execute-api.eu-west-1.amazonaws.com/prod/emails';
             let message = "Hello " + receiverName + ",<br/>Here are your ticket links for <b>" + genre + " concerts</b> in <b>" + city + "</b>.<br/>";
@@ -63,4 +61,6 @@ TicketService.sendEmail = (email, receiverName, city, genre) => {
         });
 };
 
-module.exports = TicketService;
+module.exports = {
+    sendEmail
+};
