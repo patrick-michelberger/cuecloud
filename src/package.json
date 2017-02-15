@@ -20,18 +20,23 @@
     "voice",
     "charts",
     "speech",
+    "event",
+    "events",
+    "genius",
+    "bandcamp",
+    "spotify",
     "songkick"
   ],
   "license": "MIT",
   "dependencies": {
-    "alexa-sdk": "^1.0.6",
-    "aws-sdk": "^2.9.0",
-    "firebase-admin": "^4.1.0",
-    "jsonwebtoken": "^7.2.1",
+    "alexa-sdk": "^1.0.7",
+    "aws-sdk": "^2.13.0",
+    "firebase-admin": "^4.1.1",
+    "jsonwebtoken": "^7.3.0",
     "random-id": "0.0.2",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
-    "serverless": "^1.6.1",
+    "serverless": "^1.7.0",
     "spotify-web-api-node": "^2.3.6"
   }
 }
