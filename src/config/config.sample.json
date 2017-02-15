@@ -1,25 +1,24 @@
 {
-    "jwtSecret": "mysecret",
-    "googleApiKey": "",
-    "alexa": {
-        "client_id": "",
-        "redirect": ""
-    },
-    "ticketmaster": {
-      "apiKey": ""
-    },
-    "spotify": {
-      "clientId" : "",
-      "clientSecret" : "",
-      "accessToken": "",
-      "redirectURI": "",
-      "refreshToken" : ""
-    },
-    "firebase" : {
-      "apiKey": "",
-      "authDomain": "",
-      "databaseURL": "",
-      "storageBucket": "",
-      "messagingSenderId": ""
-    }
+  "jwtSecret": "mysecret",
+  "alexa": {
+    "client_id": "",
+    "redirect": ""
+  },
+  "ticketmaster": {
+    "apiKey": ""
+  },
+  "spotify": {
+    "clientId": "",
+    "clientSecret": "",
+    "accessToken": "",
+    "redirectURI": "",
+    "refreshToken": ""
+  },
+  "firebase": {
+    "apiKey": "",
+    "authDomain": "",
+    "databaseURL": "",
+    "storageBucket": "",
+    "messagingSenderId": ""
+  }
 }

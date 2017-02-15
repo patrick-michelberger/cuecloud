@@ -5,8 +5,9 @@ const lambda = require('../api/aws-lambda');
 const spotify = require('../api/spotify');
 
 const fetchEvents = (location, genre) => {
-    return spotify.getArtistsByGenre([genre])
-        .then((artists) => {
+    // return spotify.getArtistsByGenre([genre])
+    //     .then((artists) => {
+            const artists = ['Flume', 'Disclosure'];
             console.log("found artists: ", artists);
             let eventCalls = [];
             artists.forEach((artist) => {
@@ -53,9 +54,9 @@ const fetchEvents = (location, genre) => {
                 }).catch((error) => {
                     console.log("error: populating events: ", error);
                 });
-        }).catch((error) => {
-            console.log("error: fetching artists: ", error);
-        });
+        // }).catch((error) => {
+        //     console.log("error: fetching artists: ", error);
+        // });
 };
 
 module.exports = {
