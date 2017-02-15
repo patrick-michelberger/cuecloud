@@ -32,6 +32,27 @@ const uploadFile = (fileUri, fileName) => {
         })
 };
 
+/**
+ * Check if file exists on bucket.
+ *
+ * @param fileName file to search on the bucket
+ * @returns {Promise} resolve with true if file exists or false if file doesn't exist
+ */
+const fileExists = (fileName) => {
+    return new Promise((resolve, reject) => {
+        const s3FileParams = {
+            Key: fileName
+        };
+        s3.headObject(s3FileParams, (err, data) => {
+            if (err) {
+                resolve(false);
+            } else {
+                resolve(true)
+            }
+        });
+    })
+};
+
 const getFile = (fileName) => {
     return new Promise((resolve, reject) => {
         const s3FileParams = {
