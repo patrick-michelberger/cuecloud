@@ -1,1 +1,5 @@
-AskForEventsIntent wer spielt in {city}
+EventsInCityIntent wer spielt in {city}
+EventsInCityIntent nach Konzerte in {city}
+EventsInCityIntent Konzerte in {city}
+EventsInCityIntent in {city}
+EventsInCityIntent {city}

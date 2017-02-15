@@ -10,10 +10,10 @@ const englishOutput = {
 
 const germanOutput = {
     'SKILL_NAME': 'Cuecloud',
-    'WELCOME_MESSAGE': 'Wilkommen. In welcher Stadt möchtest du Infos zu Konzerten?',
+    'WELCOME_MESSAGE': 'Willkommen! Für welche Stadt möchtest du Konzertinfos?',
     'HELP_MESSAGE': "Sage einfach 'öffne konzerte'",
     'HELP_REPROMPT': 'Wie kann ich dir helfen?',
-    'STOP_MESSAGE': 'Tschüss!'
+    'STOP_MESSAGE': 'Bis bald!'
 };
 
 const speechOutput = {
@@ -27,5 +27,8 @@ const speechOutput = {
         'translation': germanOutput
     }
 };
+
+// for easier development we put the output directly onto the speechOutput object
+Object.assign(speechOutput, germanOutput);
 
 module.exports = speechOutput;

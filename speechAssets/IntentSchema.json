@@ -1,49 +1,19 @@
 {
   "intents": [
     {
-      "intent": "AskForEventsIntent",
+      "intent": "EventsInCityIntent",
       "slots": [
         {
           "name": "city",
-          "type": "AMAZON.US_CITY"
-        },
-        {
-          "name": "genre",
-          "type": "LIST_OF_GENRES"
+          "type": "AMAZON.DE_CITY"
         }
       ]
     },
     {
-      "intent": "SelectEventIntent",
-      "slots": [
-        {
-          "name": "city",
-          "type": "AMAZON.US_CITY"
-        },
-        {
-          "name": "genre",
-          "type": "LIST_OF_GENRES"
-        }
-      ]
+      "intent": "AMAZON.NoIntent"
     },
     {
-      "intent": "SendTicketIntent",
-      "slots": [
-        {
-          "name": "city",
-          "type": "AMAZON.US_CITY"
-        },
-        {
-          "name": "genre",
-          "type": "LIST_OF_GENRES"
-        }
-      ]
-    },
-    {
-      "intent": "AMAZON.PauseIntent"
-    },
-    {
-      "intent": "AMAZON.ResumeIntent"
+      "intent": "AMAZON.YesIntent"
     },
     {
       "intent": "AMAZON.HelpIntent"

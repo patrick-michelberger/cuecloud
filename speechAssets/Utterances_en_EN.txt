@@ -1,10 +1,1 @@
-AskForEventsIntent who plays in {city}
-AskForEventsIntent search {genre} concerts in {city}
-AskForEventsIntent play {genre} concerts in {city}
-SendTicketIntent send me a ticket link for concerts in {city}
-SendTicketIntent send me a ticket link for {genre} concerts in {city}
-SendTicketIntent send me concerts in {city}
-SendTicketIntent send me {genre} concerts in {city}
-
-SendTicketIntent send me tickets in {city}
-SendTicketIntent send me an email with concerts in {city}
+EventsInCityIntent concerts in {city}
