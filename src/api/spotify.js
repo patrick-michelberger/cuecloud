@@ -1,17 +1,10 @@
 'use strict';
 
-const config = require("./../config/config.json");
 const SpotifyWebApi = require('spotify-web-api-node');
 const url = require('url');
 const DEFAULT_COUNTRY = 'DE'; // format: ISO 3166-1 alpha-2
 
 const spotify = new SpotifyWebApi();
-
-spotify.setAccessToken(config.spotify.accessToken);
-spotify.setRefreshToken(config.spotify.refreshToken);
-spotify.setRedirectURI(config.spotify.redirectURI);
-spotify.setClientId(config.spotify.clientId);
-spotify.setClientSecret(config.spotify.clientSecret);
 
 const getArtistId = (artist) => {
     return spotify.searchArtists(artist)
@@ -52,24 +45,6 @@ const getArtistTopTrackSpotifyUri = (artistId) => {
         })
 };
 
-const getArtistsByGenre = (genres) => {
-    return refreshAccessToken()
-        .then(() => {
-            return spotify.getRecommendations({
-                seed_genres: genres
-            });
-        }).then((data) => {
-            return data.body.tracks.map(track => track["artists"][0].name);
-        });
-};
-
-const refreshAccessToken = () => {
-    return spotify.refreshAccessToken()
-        .then((data) => {
-            spotify.setAccessToken(data.body['access_token']);
-        });
-};
-
 const getIdFromPreviewUrl = (mp3PreviewUrl) => {
     // example: https://p.scdn.co/mp3-preview/d0a77a3229af6dc37420db230c92d5d96a2da78
     const path = url.parse(mp3PreviewUrl).pathname;
@@ -80,6 +55,5 @@ module.exports = {
     getArtistId,
     getArtistTopTrackPreviewUrl,
     getArtistTopTrackSpotifyUri,
-    getArtistsByGenre,
     getIdFromPreviewUrl
 };

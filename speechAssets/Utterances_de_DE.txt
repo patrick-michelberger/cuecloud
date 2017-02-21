@@ -1,5 +1,8 @@
 EventsInCityIntent wer spielt in {city}
+EventsInCityIntent nach Konzerten in {city}
 EventsInCityIntent nach Konzerte in {city}
 EventsInCityIntent Konzerte in {city}
 EventsInCityIntent in {city}
 EventsInCityIntent {city}
+EventsInCityIntent nach Events in {city}
+EventsInCityIntent nach Musik in {city}

@@ -25,57 +25,43 @@ const handlers = {
         this.emit(':ask', this.t('WELCOME_MESSAGE'), this.t('WELCOME_MESSAGE'));
     },
     'EventsInCityIntent' () {
-        const city = 'los angeles'; // this.event.request.intent.slots.city.value;
-        const genre = 'electronic'; // this.event.request.intent.slots.genre.value || "electronic";
+        const city = this.event.request.intent.slots.city.value;
         if (!city) {
             this.emit(':ask', "Ich habe die Stadt nicht verstanden. Für weche Stadt möchtest du nochmal Konzertinfos?");
         } else {
-            events.fetchEvents(city, genre)
-                .then(events => {
-                    const previewTrackCalls = [];
-
-                    events.forEach((event) => {
-                        previewTrackCalls.push(songs.getPreviewTrackUrl(event.artists[0].name));
-                    });
-                    return Promise.all(previewTrackCalls)
-                        .then((previewTracks) => {
-                            for (let i = 0; i < events.length; i++) {
-                                events[i].artist = {};
-                                events[i].artist.previewUrl = previewTracks[i];
-                                events[i].artist.name = event.artists[0].name;
-                            }
-                            return events;
-                        });
-                })
+            events.fetchEvents(city)
                 .then(events => {
                     if (events.length < 1) {
-                        this.emit(':tell', 'Ich habe leider keine ' + genre + ' Konzerte in ' + city + ' gefunden.');
+                        this.emit(':tell', 'Ich habe leider keine Konzerte in ' + city + ' gefunden.');
                     } else {
-                        let outputString = 'Ich habe ' + events.length + ' ' + genre + ' Konzerte in ' + city + ' <break time="1s"/>. Von ';
+                        let outputString = 'Ich habe ' + events.length + ' Konzerte in ' + city + ' gefunden. Von ';
                         events.forEach((event, index) => {
                             if (index !== events.length - 1) {
-                                outputString += event.artist.name + ' <break time="0.5s"/>';
+                                outputString += event.artist + ', ';
                             } else {
-                                outputString += " und " + event.artist.name + ' <break time="0.5s"/>';
+                                outputString += " und " + event.artist+ '. ';
                             }
                         });
 
                         if (events[0]) {
-                            outputString += 'Jetzt kommt ' + events[0].artist.name +
-                                ' in ' + events[0].venue.name +
-                                '<break time="1s"/><audio src="' + events[0].artist.previewUrl + '"></audio>' +
+                            outputString += 'Jetzt kommt ' + events[0].artist +
+                                ' in ' + events[0].venue +
+                                '<break time="1s"/><audio src="' + events[0].topTrackPreviewUrl + '"></audio>' +
                                 '. Weiter?';
                         }
-                        this.emit(':ask', outputString.replace("&", "and"), 'Weiter?');
+                        this.emit(':ask', outputString, ' Weiter?');
                     }
                 });
         }
     },
     'AMAZON.YesIntent'() {
-
+        this.emit(':tell', 'Ja');
     },
     'AMAZON.NoIntent'() {
-
+        this.emit(':tell', 'Nein');
+    },
+    'AMAZON.NextIntent'() {
+        this.emit(':tell', 'Weiter');
     },
     'AMAZON.HelpIntent'(){
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);

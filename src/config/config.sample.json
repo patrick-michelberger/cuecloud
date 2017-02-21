@@ -4,15 +4,11 @@
     "client_id": "",
     "redirect": ""
   },
-  "ticketmaster": {
+  "eventful": {
     "apiKey": ""
   },
-  "spotify": {
-    "clientId": "",
-    "clientSecret": "",
-    "accessToken": "",
-    "redirectURI": "",
-    "refreshToken": ""
+  "ticketmaster": {
+    "apiKey": ""
   },
   "firebase": {
     "apiKey": "",
