@@ -5,38 +5,35 @@ const AWS = require('aws-sdk');
 const s3 = new AWS.S3({ params: { Bucket: 'spotify-preview-mp3s-for-alexa' } });
 
 /**
- * Upload a file to S3. If a file with the given filename already exists the file
- * doesn't get uploaded again.
+ * Upload a file to S3
  *
  * @param fileUri the file to upload
  * @param fileName the name of the file to upload
  * @returns {Promise} resolved with the location url
  */
 const uploadFile = (fileUri, fileName) => {
-    return getFile(fileName)
-        .catch(() => {
-            return new Promise((resolve, reject) => {
-                const s3FileParams = {
-                    Key: fileName,
-                    Body: fs.readFileSync(fileUri)
-                };
-                s3.upload(s3FileParams, (err, data) => {
-                    if (err) {
-                        console.error('Error uploading file to S3', err);
-                        reject(err);
-                    } else {
-                        resolve(data.Location);
-                    }
-                })
-            });
+    return new Promise((resolve, reject) => {
+        const s3FileParams = {
+            Key: fileName,
+            Body: fs.readFileSync(fileUri)
+        };
+        s3.upload(s3FileParams, (err, data) => {
+            if (err) {
+                console.error('Error uploading file to S3', err);
+                reject(err);
+            } else {
+                resolve(data.Location);
+            }
         })
+    });
 };
 
 /**
  * Check if file exists on bucket.
  *
  * @param fileName file to search on the bucket
- * @returns {Promise} resolve with true if file exists or false if file doesn't exist
+ * @returns {Promise} resolve with true if file exists or false if file doesn't exist.
+ * If the file exists the meta data will be the second argument.
  */
 const fileExists = (fileName) => {
     return new Promise((resolve, reject) => {
@@ -47,13 +44,13 @@ const fileExists = (fileName) => {
             if (err) {
                 resolve(false);
             } else {
-                resolve(true)
+                resolve(true, data)
             }
         });
     })
 };
 
-const getFile = (fileName) => {
+const getFileUrl = (fileName) => {
     return new Promise((resolve, reject) => {
         const s3FileParams = {
             Key: fileName
@@ -71,7 +68,9 @@ const getFile = (fileName) => {
 };
 
 module.exports = {
-    uploadFile
+    uploadFile,
+    fileExists,
+    getFileUrl
 };
 
 const removeParameterFromUrl = (url) => {

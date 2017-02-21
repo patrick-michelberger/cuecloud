@@ -9,7 +9,7 @@ const SORT_ORDER = {
     RELEVANCE: 'relevance'
 };
 
-const MAX_RESULT = 2;
+const MAX_RESULT = 5;
 
 const getEventsByLocation = (location) => {
     const options = {

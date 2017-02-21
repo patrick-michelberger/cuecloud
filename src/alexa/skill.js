@@ -45,7 +45,7 @@ const handlers = {
                             outputString += 'Jetzt kommt ' + events[0].artist +
                                 ' in ' + events[0].venue +
                                 '<audio src="' + events[0].topTrackPreviewUrl + '"></audio>' +
-                                '. Weiter?';
+                                '<break time="0.5s"/> Weiter?';
                         }
                         this.attributes['currentEventIndex'] = 0;
                         this.attributes['events'] = events;
@@ -100,17 +100,13 @@ const handlers = {
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);
     },
     'AMAZON.CancelIntent'(){
-        this.attributes['index'] = 10;
-        this.response.audioPlayerStop();
         this.emit(':tell', speechOutput.STOP_MESSAGE);
     },
     'AMAZON.StopIntent'(){
-        this.attributes['index'] = 10;
-        this.response.audioPlayerStop();
         this.emit(':responseReady');
     },
-    'Unhandled'() {
-        console.error('Error happened');
+    'Unhandled'(err) {
+        console.error('Alexa Skill error', err);
         this.emit(':tell', 'Ein Fehler ist aufgetreten');
     }
 };
