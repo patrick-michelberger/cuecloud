@@ -29,7 +29,7 @@ const handlers = {
         } else {
             events.fetchEvents(city)
                 .then(events => {
-                    if (events.length < 1) {
+                    if (!events || events.length < 1) {
                         this.emit(':tell', 'Ich habe leider keine Konzerte in ' + city + ' gefunden.');
                     } else {
                         let outputString = 'Ich habe ' + events.length + ' Konzerte in ' + city + ' gefunden. Und zwar von ';
@@ -46,7 +46,7 @@ const handlers = {
                         this.attributes['currentEventIndex'] = 0;
                         this.attributes['events'] = events;
                         this.attributes['city'] = city;
-                        this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
+                        this.emit(':ask', outputString, ' Willst du das Lied zum nächsten Konzert hören?');
                     }
                 });
         }
@@ -86,7 +86,7 @@ const handlers = {
             const event = events[nextIndex];
 
             const outputString = getEventSpeechOutput(event);
-            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
+            this.emit(':ask', outputString, ' Willst du das Lied zum nächsten Konzert hören?');
         } else {
             this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
         }
@@ -97,5 +97,5 @@ const getEventSpeechOutput = (event) => {
     return 'Du hörst nun ' + event.artist +
         '<audio src="' + event.topTrackPreviewUrl + '"></audio><break time="0.5s"/>' +
         event.artist + ' tritt in ' + event.venue + ' auf' +
-        '<break time="0.5s"/> Nächstes Lied?';
+        '<break time="0.5s"/> Willst du das Lied zum nächsten Konzert hören?';
 };
