@@ -41,12 +41,8 @@ const handlers = {
                             }
                         });
 
-                        if (events[0]) {
-                            outputString += 'Jetzt kommt ' + events[0].artist +
-                                ' in ' + events[0].venue +
-                                '<audio src="' + events[0].topTrackPreviewUrl + '"></audio>' +
-                                '<break time="0.5s"/> Weiter?';
-                        }
+                        outputString += getEventSpeechOutput(events[0]);
+
                         this.attributes['currentEventIndex'] = 0;
                         this.attributes['events'] = events;
                         this.attributes['city'] = city;
@@ -56,45 +52,13 @@ const handlers = {
         }
     },
     'AMAZON.YesIntent'() {
-        const nextIndex = this.attributes['currentEventIndex'] + 1;
-        const events = this.attributes['events'];
-        const city = this.attributes['city'];
-
-        if (events.length > nextIndex) {
-            this.attributes['currentEventIndex'] = nextIndex;
-
-            const event = events[nextIndex];
-
-            const outputString = 'Jetzt kommt ' + event.artist +
-                ' in ' + event.venue +
-                '<audio src="' + event.topTrackPreviewUrl + '"></audio>' +
-                '. Weiter?';
-            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
-        } else {
-            this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
-        }
+        this.emit('nextEventIntent');
     },
     'AMAZON.NoIntent'() {
         this.emit(':tell', 'Bis bald!');
     },
     'AMAZON.NextIntent'() {
-        const nextIndex = this.attributes['currentEventIndex'] + 1;
-        const events = this.attributes['events'];
-        const city = this.attributes['city'];
-
-        if (events.length > nextIndex) {
-            this.attributes['currentEventIndex'] = nextIndex;
-
-            const event = events[nextIndex];
-
-            const outputString = 'Jetzt kommt ' + event.artist +
-                ' in ' + event.venue +
-                '<audio src="' + event.topTrackPreviewUrl + '"></audio>' +
-                '. Weiter?';
-            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
-        } else {
-            this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
-        }
+        this.emit('nextEventIntent');
     },
     'AMAZON.HelpIntent'(){
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);
@@ -105,8 +69,33 @@ const handlers = {
     'AMAZON.StopIntent'(){
         this.emit(':responseReady');
     },
-    'Unhandled'(err) {
-        console.error('Alexa Skill error', err);
+    'Unhandled'() {
+        console.error('Unhandled error in alexa skill');
         this.emit(':tell', 'Ein Fehler ist aufgetreten');
+    },
+
+    // internal intents
+    'nextEventIntent'() {
+        const nextIndex = this.attributes['currentEventIndex'] + 1;
+        const events = this.attributes['events'];
+        const city = this.attributes['city'];
+
+        if (events.length > nextIndex) {
+            this.attributes['currentEventIndex'] = nextIndex;
+
+            const event = events[nextIndex];
+
+            const outputString = getEventSpeechOutput(event);
+            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
+        } else {
+            this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
+        }
     }
+};
+
+const getEventSpeechOutput = (event) => {
+    return 'Du hörst nun ' + event.artist +
+        '<audio src="' + event.topTrackPreviewUrl + '"></audio><break time="0.5s"/>' +
+        event.artist + ' tritt in ' + event.venue + ' auf' +
+        '<break time="0.5s"/> Nächstes Lied?';
 };
