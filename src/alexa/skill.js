@@ -5,16 +5,14 @@ const songs = require('../songs/songs');
 const speechOutput = require('./speech-output');
 const events = require('../events/events');
 
-// const Auth = require('./auth');
-
 // TODO Put all paths into env script (also set path to ffmpeg into env vars)
+
 // needed for aws lambda to find our binaries
 process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT'];
 
 exports.handler = (event, context, callback) => {
     const alexa = Alexa.handler(event, context);
     alexa.appId = 'amzn1.ask.skill.baee0e61-2728-43f5-97d5-b8e3d43cbc63';
-    //alexa.dynamoDBTableName = 'cuecloud';
     alexa.registerHandlers(handlers);
     alexa.resources = speechOutput;
     alexa.execute();
@@ -34,7 +32,7 @@ const handlers = {
                     if (events.length < 1) {
                         this.emit(':tell', 'Ich habe leider keine Konzerte in ' + city + ' gefunden.');
                     } else {
-                        let outputString = 'Ich habe ' + events.length + ' Konzerte in ' + city + ' gefunden. Von ';
+                        let outputString = 'Ich habe ' + events.length + ' Konzerte in ' + city + ' gefunden. Und zwar von ';
                         events.forEach((event, index) => {
                             if (index !== events.length - 1) {
                                 outputString += event.artist + ', ';
@@ -46,22 +44,57 @@ const handlers = {
                         if (events[0]) {
                             outputString += 'Jetzt kommt ' + events[0].artist +
                                 ' in ' + events[0].venue +
-                                '<break time="1s"/><audio src="' + events[0].topTrackPreviewUrl + '"></audio>' +
+                                '<audio src="' + events[0].topTrackPreviewUrl + '"></audio>' +
                                 '. Weiter?';
                         }
-                        this.emit(':ask', outputString, ' Weiter?');
+                        this.attributes['currentEventIndex'] = 0;
+                        this.attributes['events'] = events;
+                        this.attributes['city'] = city;
+                        this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
                     }
                 });
         }
     },
     'AMAZON.YesIntent'() {
-        this.emit(':tell', 'Ja');
+        const nextIndex = this.attributes['currentEventIndex'] + 1;
+        const events = this.attributes['events'];
+        const city = this.attributes['city'];
+
+        if (events.length > nextIndex) {
+            this.attributes['currentEventIndex'] = nextIndex;
+
+            const event = events[nextIndex];
+
+            const outputString = 'Jetzt kommt ' + event.artist +
+                ' in ' + event.venue +
+                '<audio src="' + event.topTrackPreviewUrl + '"></audio>' +
+                '. Weiter?';
+            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
+        } else {
+            this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
+        }
     },
     'AMAZON.NoIntent'() {
-        this.emit(':tell', 'Nein');
+        this.emit(':tell', 'Bis bald!');
     },
     'AMAZON.NextIntent'() {
-        this.emit(':tell', 'Weiter');
+        const nextIndex = this.attributes['currentEventIndex'] + 1;
+        const events = this.attributes['events'];
+        const city = this.attributes['city'];
+
+        if (events.length > nextIndex) {
+            this.attributes['currentEventIndex'] = nextIndex;
+
+            const event = events[nextIndex];
+
+            const outputString = 'Jetzt kommt ' + event.artist +
+                ' in ' + event.venue +
+                '<audio src="' + event.topTrackPreviewUrl + '"></audio>' +
+                '. Weiter?';
+            this.emit(':ask', outputString, ' Lied zum nächsten Konzert?');
+        } else {
+            this.emit(':tell', 'Es gibt keine weiteren Konzerte mehr in ' + city);
+        }
     },
     'AMAZON.HelpIntent'(){
         this.emit(':ask', speechOutput.HELP_MESSAGE, speechOutput.HELP_REPROMPT);
